@@ -1,6 +1,8 @@
 package com.example.minesweeper;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,28 +17,59 @@ public class GameActivity extends Activity {
 	
 	int total;
 	
+	int time = 0;
+	
 	boolean inUse[][] = new boolean[COL][ROW];
 	boolean isFlagged[][] = new boolean[COL][ROW];
 	int surrounding[][] = new int[COL][ROW];
 	
 	boolean isHappy = true;
 	boolean gameOver = false;
-	
+
 	int count = 0;
+	
+	Timer timer = new Timer();
+	
+
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		total = ROW * COL - mines; 
+		total = ROW * COL - mines;
+		System.out.print(total);
+		FillGame();
+		PrintBoard();
+
+		timer.schedule(new GameTimerTask(),0,1000);
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 	}
 
+    class GameTimerTask extends TimerTask{
+		@Override
+		public void run() {
+			time++;
+		}    	
+    }
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.game, menu);
 		return true;
 	}
+	
+	public void setTime()
+	{
+		
+	}
+	
+    public void FillGame()
+    {
+        FillBoard();
+        FillSurround();
+    }
 	
 	public void FillBoard()
 	{
@@ -112,5 +145,32 @@ public class GameActivity extends Activity {
         }
     }
     
-    
+    public void PrintBoard()
+    {
+        for (int i = 0; i < COL; i++)
+        {
+            for (int j = 0; j < ROW; j++)
+            {
+                System.out.print(surrounding[j][i] + " ");
+            }
+            System.out.println();
+        }
+
+
+        int test;
+        System.out.println();
+
+        for (int i = 0; i < COL; i++)
+        {
+            for (int j = 0; j < ROW; j++)
+            {
+                if (inUse[j][i])
+                    test = 1;
+                else
+                    test = 0;
+                System.out.print(test + " ");
+            }
+            System.out.println();
+        }
+    }
 }
