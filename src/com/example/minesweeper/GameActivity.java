@@ -1,13 +1,32 @@
 package com.example.minesweeper;
 
-import android.os.Bundle;
+import java.util.Random;
+
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class GameActivity extends Activity {
 
+	private static int ROW = 9;
+	private static int COL = 9;
+	
+	private int mines = 10;
+	
+	int total;
+	
+	boolean inUse[][] = new boolean[COL][ROW];
+	boolean isFlagged[][] = new boolean[COL][ROW];
+	int surrounding[][] = new int[COL][ROW];
+	
+	boolean isHappy = true;
+	boolean gameOver = false;
+	
+	int count = 0;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		total = ROW * COL - mines; 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 	}
@@ -18,5 +37,80 @@ public class GameActivity extends Activity {
 		getMenuInflater().inflate(R.menu.game, menu);
 		return true;
 	}
+	
+	public void FillBoard()
+	{
+		int i = 0;
+		int colRand, rowRand;
+		Random rand = new Random();
+		
+		while (i<mines)
+		{
+			colRand = rand.nextInt(COL);
+			rowRand = rand.nextInt(ROW);
+			
+			if (!inUse[colRand][rowRand])
+				inUse[colRand][rowRand] = true;
+			else
+				continue;
+			
+			i++;			
+		}
+		
+	}
 
+	public int CheckSurround(int r, int c)
+	{
+		int count = 0;
+		
+		if (r - 1 >= 0)
+		{
+			if (inUse[c][r-1])
+				count ++;
+			
+			if (c - 1 >= 0)
+				if (inUse[c-1][r-1])
+					count++;
+			if (c+1 < COL)
+				if (inUse[c+1][r-1])
+					count++;
+		}
+		
+		if (r + 1 < ROW)
+        {
+            if (inUse[c][r + 1])
+                count++;
+
+            if (c - 1 >= 0)
+                if (inUse[c - 1][r + 1])
+                    count++;
+            if (c + 1 < COL)
+                if (inUse[c + 1][r + 1])
+                    count++;
+        }
+
+        if (c - 1 >= 0)
+            if (inUse[c - 1][r])
+                count++;
+
+        if (c + 1 < COL)
+            if (inUse[c + 1][r])
+                count++;
+
+        return count;		
+	}
+	
+    public void FillSurround()
+    {
+
+        for (int i = 0; i < COL; i++)
+        {
+            for (int j = 0; j < ROW; j++)
+            {
+                surrounding[i][j] = CheckSurround(j, i);
+            }
+        }
+    }
+    
+    
 }
