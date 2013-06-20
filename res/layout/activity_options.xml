@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_options_id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -9,8 +10,28 @@
     tools:context=".OptionsActivity" >
 
     <TextView
+        android:id="@+id/options_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/options" />
+
+    <Button
+        android:id="@+id/easy_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/hard_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="27dp"
+        android:onClick="setEasy"
+        android:text="@string/easy" />
+
+    <Button
+        android:id="@+id/hard_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/easy_button"
+        android:layout_centerVertical="true"
+        android:onClick="setHard"
+        android:text="@string/hard" />
 
 </RelativeLayout>
