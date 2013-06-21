@@ -59,6 +59,11 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int options=0x7f080003;
     }
     public static final class string {
+        public static final int Change4=0x7f060015;
+        public static final int Change6=0x7f060014;
+        public static final int Hello_There=0x7f060016;
+        public static final int IloveAlice=0x7f060012;
+        public static final int IloveChris=0x7f060013;
         public static final int action_settings=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int dummy_button=0x7f060007;
