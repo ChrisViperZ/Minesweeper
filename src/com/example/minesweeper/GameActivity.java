@@ -30,9 +30,6 @@ public class GameActivity extends Activity {
 	
 	Timer timer = new Timer();
 	
-
-
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
