@@ -7,12 +7,14 @@ import android.view.Menu;
 import android.view.View;
 
 public class MainActivity extends Activity {
-	
 	private boolean hardMode = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Intent intent = getIntent();
+		hardMode = intent.getBooleanExtra("hardMode", false);
 		
 		setContentView(R.layout.activity_main);
 	}
@@ -33,6 +35,7 @@ public class MainActivity extends Activity {
 	public void options_click(View view)
 	{
 		Intent intent = new Intent(this, OptionsActivity.class);
+		intent.putExtra("hardMode", hardMode);
 		startActivity(intent);
 	}
 	

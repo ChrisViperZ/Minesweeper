@@ -6,6 +6,8 @@
     <string name="title">Minesweeper!</string>
     <string name="start_text">Start</string>
     <string name="options_text">Options</string>
+    <string name="easy">Easy</string>
+    <string name="hard">Hard</string>
     <string name="hs_text">High Scores</string>
     <string name="title_activity_startscreen">StartscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
