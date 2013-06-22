@@ -102,6 +102,7 @@ public class GameActivity extends Activity {
 							
     						int cCOL = Integer.parseInt(Integer.toString(v.getId()).substring(0,2));
     						int cROW = Integer.parseInt(Integer.toString(v.getId()).substring(2,4));
+    						
 						}
 						else
 						{
