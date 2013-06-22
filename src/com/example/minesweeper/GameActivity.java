@@ -7,6 +7,8 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 
 public class GameActivity extends Activity {
 
@@ -25,14 +27,12 @@ public class GameActivity extends Activity {
 	
 	boolean isHappy = true;
 	boolean gameOver = false;
+	boolean isFlag = false;
 
 	int count = 0;
 	
 	Timer timer = new Timer();
-	
-
-
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
@@ -49,7 +49,8 @@ public class GameActivity extends Activity {
     class GameTimerTask extends TimerTask{
 		@Override
 		public void run() {
-			time++;
+			if(!gameOver)
+				time++;
 		}    	
     }
 	
@@ -60,15 +61,59 @@ public class GameActivity extends Activity {
 		return true;
 	}
 	
-	public void setTime()
-	{
-		
-	}
-	
     public void FillGame()
     {
         FillBoard();
         FillSurround();
+    }
+    
+    public void clearBoard()
+    {
+    	Button b;
+    	String id;
+    	
+    	for(int i = 0; i < COL; i++)
+    	{
+    		for(int j = 0; j < ROW; j++)
+    		{
+    			b = new Button(this);
+    			
+    			id = new String();
+    			
+    			if (i>9)
+    				id += Integer.toString(i);
+    			else
+    				id += "0" + Integer.toString(i);
+    			
+    			if(j>9)
+    				id += Integer.toString(j);
+    			else
+    				id += "0" + Integer.toString(j);
+    			
+    			b.setId(Integer.parseInt(id));
+    			b.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if(!isFlag)
+						{
+							//Flag icon not selected
+							if(gameOver)
+								return;
+							
+    						int cCOL = Integer.parseInt(Integer.toString(v.getId()).substring(0,2));
+    						int cROW = Integer.parseInt(Integer.toString(v.getId()).substring(2,4));
+						}
+						else
+						{
+							//Flag icon is selected
+						}
+						
+					}
+				});
+    			
+    		}
+    	}
+    	
     }
 	
 	public void FillBoard()
