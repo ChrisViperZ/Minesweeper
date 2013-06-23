@@ -16,33 +16,42 @@
         android:text="@string/title"
         android:textSize="35sp" />
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/Title_Message"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:contentDescription="@string/title"
+        android:src="@drawable/minesweeper" />
+
     <Button
         android:id="@+id/Start_Button"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/Options_Button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginTop="23dp"
         android:onClick="startGame"
         android:text="@string/start_text" />
-
-    <Button
-        android:id="@+id/Options_Button"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="options_click"
-        android:text="@string/options_text" />
 
     <Button
         android:id="@+id/HighScores_Button"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/imageView1"
         android:layout_below="@+id/Options_Button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
         android:onClick="highscores_click"
         android:text="@string/hs_text" />
+
+    <Button
+        android:id="@+id/Options_Button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/HighScores_Button"
+        android:layout_below="@+id/Start_Button"
+        android:onClick="options_click"
+        android:text="@string/options_text" />
 
 </RelativeLayout>
