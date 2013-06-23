@@ -9,30 +9,32 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TableLayout;
+import android.widget.TextView;
 
 public class GameActivity extends Activity {
 
 	private static int ROW = 9;
 	private static int COL = 9;
-	
+
 	private int mines = 10;
-	
+
 	int total;
-	
+
 	int time = 0;
-	
+
 	boolean inUse[][] = new boolean[COL][ROW];
 	boolean isFlagged[][] = new boolean[COL][ROW];
 	int surrounding[][] = new int[COL][ROW];
-	
+
 	boolean isHappy = true;
 	boolean gameOver = false;
 	boolean isFlag = false;
 
 	int count = 0;
-	
+
 	Timer timer = new Timer();
-		
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
@@ -40,183 +42,187 @@ public class GameActivity extends Activity {
 		FillGame();
 		PrintBoard();
 
-		timer.schedule(new GameTimerTask(),0,1000);
-		
+		timer.schedule(new GameTimerTask(), 0, 1000);
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 	}
 
-    class GameTimerTask extends TimerTask{
+	class GameTimerTask extends TimerTask {
 		@Override
 		public void run() {
-			if(!gameOver)
+			if (!gameOver)
 				time++;
-		}    	
-    }
-	
+		}
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.game, menu);
 		return true;
 	}
-	
-    public void FillGame()
-    {
-        FillBoard();
-        FillSurround();
-    }
-    
-    public void clearBoard()
-    {
-    	Button b;
-    	String id;
-    	
-    	for(int i = 0; i < COL; i++)
-    	{
-    		for(int j = 0; j < ROW; j++)
-    		{
-    			b = new Button(this);
-    			
-    			id = new String();
-    			
-    			if (i>9)
-    				id += Integer.toString(i);
-    			else
-    				id += "0" + Integer.toString(i);
-    			
-    			if(j>9)
-    				id += Integer.toString(j);
-    			else
-    				id += "0" + Integer.toString(j);
-    			
-    			b.setId(Integer.parseInt(id));
-    			b.setOnClickListener(new View.OnClickListener() {
+
+	public void FillGame() {
+		FillBoard();
+		FillSurround();
+	}
+
+	public void clearBoard() {
+		Button b;
+		String id;
+		
+		for (int i = 0; i < COL; i++) {
+			for (int j = 0; j < ROW; j++) {
+				b = new Button(GameActivity.this);
+
+				id = new String();
+
+				if (i > 9)
+					id += Integer.toString(i);
+				else
+					id += "0" + Integer.toString(i);
+
+				if (j > 9)
+					id += Integer.toString(j);
+				else
+					id += "0" + Integer.toString(j);
+
+				b.setId(Integer.parseInt(id));
+				b.setOnClickListener(new View.OnClickListener() {
+					
 					@Override
 					public void onClick(View v) {
-						if(!isFlag)
-						{
-							//Flag icon not selected
-							if(gameOver)
-								return;
+						if (!isFlag) {
+							// Flag icon not selected
+							TableLayout tl = (TableLayout) findViewById(R.id.grid);
 							
-    						int cCOL = Integer.parseInt(Integer.toString(v.getId()).substring(0,2));
-    						int cROW = Integer.parseInt(Integer.toString(v.getId()).substring(2,4));
-    							
+							if (gameOver)
+								return;
+
+							int cCOL = Integer.parseInt(Integer.toString(
+									v.getId()).substring(0, 2));
+							int cROW = Integer.parseInt(Integer.toString(
+									v.getId()).substring(2, 4));
+
+							if (isFlagged[cCOL][cROW])
+								return;
+
+							if (inUse[cCOL][cROW]) {
+								// Game Over
+								gameOver = true;
+
+							}
+
+							if (surrounding[cCOL][cROW] != 0) { //add textview of surrounding mines
+								
+								TextView tv = new TextView(GameActivity.this);
+								tv.setText(surrounding[cCOL][cROW]);
+								tl.addView(tv);
+								
+							}
+							else { //don't add textview (save memory) then zeroflood if possible
+								
+							}
+
+						} else {
+							// Flag icon is selected
 						}
-						else
-						{
-							//Flag icon is selected
-						}
-						
+
 					}
 				});
-    			
-    		}
-    	}
-    	
-    }
-	
-	public void FillBoard()
-	{
+
+			}
+		}
+
+	}
+
+	public void FillBoard() {
 		int i = 0;
 		int colRand, rowRand;
 		Random rand = new Random();
-		
-		while (i<mines)
-		{
+
+		while (i < mines) {
 			colRand = rand.nextInt(COL);
 			rowRand = rand.nextInt(ROW);
-			
+
 			if (!inUse[colRand][rowRand])
 				inUse[colRand][rowRand] = true;
 			else
 				continue;
-			
-			i++;			
+
+			i++;
 		}
-		
+
 	}
 
-	public int CheckSurround(int r, int c)
-	{
+	public int CheckSurround(int r, int c) {
 		int count = 0;
-		
-		if (r - 1 >= 0)
-		{
-			if (inUse[c][r-1])
-				count ++;
-			
+
+		if (r - 1 >= 0) {
+			if (inUse[c][r - 1])
+				count++;
+
 			if (c - 1 >= 0)
-				if (inUse[c-1][r-1])
+				if (inUse[c - 1][r - 1])
 					count++;
-			if (c+1 < COL)
-				if (inUse[c+1][r-1])
+			if (c + 1 < COL)
+				if (inUse[c + 1][r - 1])
 					count++;
 		}
-		
-		if (r + 1 < ROW)
-        {
-            if (inUse[c][r + 1])
-                count++;
 
-            if (c - 1 >= 0)
-                if (inUse[c - 1][r + 1])
-                    count++;
-            if (c + 1 < COL)
-                if (inUse[c + 1][r + 1])
-                    count++;
-        }
+		if (r + 1 < ROW) {
+			if (inUse[c][r + 1])
+				count++;
 
-        if (c - 1 >= 0)
-            if (inUse[c - 1][r])
-                count++;
+			if (c - 1 >= 0)
+				if (inUse[c - 1][r + 1])
+					count++;
+			if (c + 1 < COL)
+				if (inUse[c + 1][r + 1])
+					count++;
+		}
 
-        if (c + 1 < COL)
-            if (inUse[c + 1][r])
-                count++;
+		if (c - 1 >= 0)
+			if (inUse[c - 1][r])
+				count++;
 
-        return count;		
+		if (c + 1 < COL)
+			if (inUse[c + 1][r])
+				count++;
+
+		return count;
 	}
-	
-    public void FillSurround()
-    {
 
-        for (int i = 0; i < COL; i++)
-        {
-            for (int j = 0; j < ROW; j++)
-            {
-                surrounding[i][j] = CheckSurround(j, i);
-            }
-        }
-    }
-    
-    public void PrintBoard()
-    {
-        for (int i = 0; i < COL; i++)
-        {
-            for (int j = 0; j < ROW; j++)
-            {
-                System.out.print(surrounding[j][i] + " ");
-            }
-            System.out.println();
-        }
+	public void FillSurround() {
 
+		for (int i = 0; i < COL; i++) {
+			for (int j = 0; j < ROW; j++) {
+				surrounding[i][j] = CheckSurround(j, i);
+			}
+		}
+	}
 
-        int test;
-        System.out.println();
+	public void PrintBoard() {
+		for (int i = 0; i < COL; i++) {
+			for (int j = 0; j < ROW; j++) {
+				System.out.print(surrounding[j][i] + " ");
+			}
+			System.out.println();
+		}
 
-        for (int i = 0; i < COL; i++)
-        {
-            for (int j = 0; j < ROW; j++)
-            {
-                if (inUse[j][i])
-                    test = 1;
-                else
-                    test = 0;
-                System.out.print(test + " ");
-            }
-            System.out.println();
-        }
-    }
+		int test;
+		System.out.println();
+
+		for (int i = 0; i < COL; i++) {
+			for (int j = 0; j < ROW; j++) {
+				if (inUse[j][i])
+					test = 1;
+				else
+					test = 0;
+				System.out.print(test + " ");
+			}
+			System.out.println();
+		}
+	}
 }
