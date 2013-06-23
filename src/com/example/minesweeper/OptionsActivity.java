@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class OptionsActivity extends Activity {
@@ -36,12 +35,14 @@ public class OptionsActivity extends Activity {
 	public void setEasy(View view){
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("hardMode", false);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //makes sure to use old MainActivity instead of creating a new instance
 		startActivity(intent);
 	}
 	
 	public void setHard(View view){
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("hardMode", true);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(intent);
 	}
 
