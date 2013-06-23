@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,15 @@ public class GameActivity extends Activity {
 		PrintBoard();
 
 		timer.schedule(new GameTimerTask(), 0, 1000);
+		
+		GridLayout gv = (GridLayout) findViewById(R.id.grid);
+		
+		Button b = new Button(GameActivity.this);
+		
+		b.setText("Test");
+		
+		gv.addView(b);
+		
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
@@ -70,11 +80,14 @@ public class GameActivity extends Activity {
 
 	public void clearBoard() {
 		Button b;
+		TextView tv;
 		String id;
-		
+		GridLayout gv = (GridLayout) findViewById(R.id.grid);
+
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
 				b = new Button(GameActivity.this);
+				tv = new TextView(GameActivity.this);
 
 				id = new String();
 
@@ -88,23 +101,33 @@ public class GameActivity extends Activity {
 				else
 					id += "0" + Integer.toString(j);
 
+				tv.setId(Integer.parseInt(id));
+				tv.setVisibility(0);
+
 				b.setId(Integer.parseInt(id));
 				b.setOnClickListener(new View.OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
+						int cCOL, cROW;
 						if (!isFlag) {
 							// Flag icon not selected
-							TableLayout tl = (TableLayout) findViewById(R.id.grid);
 							
+							v.setVisibility(0);
 							if (gameOver)
 								return;
 
-							int cCOL = Integer.parseInt(Integer.toString(
-									v.getId()).substring(0, 2));
-							int cROW = Integer.parseInt(Integer.toString(
-									v.getId()).substring(2, 4));
-
+							if (Integer.parseInt(Integer.toString(v.getId())) < 1000) {
+								cCOL = Integer.parseInt(Integer.toString(
+										v.getId()).substring(0, 1));
+								cROW = Integer.parseInt(Integer.toString(
+										v.getId()).substring(1, 3));
+							} else {
+								cCOL = Integer.parseInt(Integer.toString(
+										v.getId()).substring(0, 2));
+								cROW = Integer.parseInt(Integer.toString(
+										v.getId()).substring(2, 4));
+							}
 							if (isFlagged[cCOL][cROW])
 								return;
 
@@ -114,15 +137,12 @@ public class GameActivity extends Activity {
 
 							}
 
-							if (surrounding[cCOL][cROW] != 0) { //add textview of surrounding mines
+							if (surrounding[cCOL][cROW] != 0) { 
+								//TextView tv = (TextView) findViewbyId();
 								
-								TextView tv = new TextView(GameActivity.this);
-								tv.setText(surrounding[cCOL][cROW]);
-								tl.addView(tv);
-								
-							}
-							else { //don't add textview (save memory) then zeroflood if possible
-								
+
+							} else { 
+
 							}
 
 						} else {
@@ -132,6 +152,7 @@ public class GameActivity extends Activity {
 					}
 				});
 
+				gv.addView(b);
 			}
 		}
 
