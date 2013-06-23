@@ -41,6 +41,55 @@
                 android:text="This2" />
         </LinearLayout>
 
+        <RelativeLayout
+            android:id="@+id/addscoretab"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:paddingTop="60dp" >
+
+            <ToggleButton
+                android:id="@+id/mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onModeClicked"
+                android:textOff="Easy"
+                android:textOn="Hard" />
+
+            <EditText
+                android:id="@+id/score_entry"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/mode"
+                android:layout_weight="1"
+                android:inputType="number" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_toRightOf="@id/score_entry"
+                android:layout_weight="1"
+                android:onClick="addScore"
+                android:text="Add Score" />
+
+            <Button
+                android:id="@+id/reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/score_entry"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:onClick="resetScores"
+                android:text="Reset" />
+
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/reset"
+                android:text="Default" />
+        </RelativeLayout>
     </FrameLayout>
 
 </TabHost>
