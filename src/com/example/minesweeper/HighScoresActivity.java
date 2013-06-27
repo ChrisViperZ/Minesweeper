@@ -1,12 +1,17 @@
 package com.example.minesweeper;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
@@ -41,6 +46,8 @@ public class HighScoresActivity extends Activity {
 		tabHost.addTab(spec3);
 		
 		initScores();
+		updateEasy();
+		updateHard();
 	}
 	
 
@@ -56,19 +63,21 @@ public class HighScoresActivity extends Activity {
 		hardMode = ((ToggleButton) view).isChecked();		
 	}
 	
+	//adds a score into the EASY or HARD high score list, if it is in the top 5
 	public void addScore(View view) {
-		//TODO:: HERE score_entry id
 		SharedPreferences scores = getSharedPreferences("scoreList", 0);
 		int easybound = scores.getInt("e4", 999);
 		int hardbound = scores.getInt("h4", 999);
-		RelativeLayout v = (RelativeLayout) findViewById(R.id.addscoretab);
-		String cat = "not added";
+		RelativeLayout v = (RelativeLayout) findViewById(R.id.addscoretab); //we need this here because things are hardcoded because i am bad
+		String cat = "";
 		
 		EditText et = (EditText) v.getChildAt(1); //get the new score -- THIS NUMBER IS HARDCODED; EDIT IF ACTIVITY_HIGH_SCORES.XML IS EDITED
 
-		if (et.getText().length() != 0){ //makes sure theres actually something in the field
+		if (et.getText().length() != 0){ //makes sure theres actually something in the field...but the else statement seems to never be triggered
 			
 			int newscore = Integer.parseInt( et.getText().toString() );
+			
+			//criteria for adding a new hard high score 
 			if(hardMode && newscore < hardbound){
 				String key = "";
 				//grab the top 4 hard scores 
@@ -80,6 +89,8 @@ public class HighScoresActivity extends Activity {
 				reSort(arr, newscore);
 
 			}
+			
+			//criteria for adding a new easy high score
 			else if(!hardMode && newscore < easybound){
 				String key = "";
 				//grab the top 4 easy scores 
@@ -92,18 +103,54 @@ public class HighScoresActivity extends Activity {
 			}
 		}
 		else { cat = "Enter valid score"; }
+
+		//update necessary tabs and display a message
+		if (hardMode) { updateHard(); }
+		else { updateEasy(); }
 		
-		cat = hardMode ? "hard: " : "easy: ";
-		String m = hardMode ? "h" : "e";
-		for (int j = 0; j < 5; j++){
-			cat = cat.concat(Integer.toString(scores.getInt( m.concat(Integer.toString(j)), 999)));
-			cat = cat.concat(" ");
-		}
+		String m = hardMode ? "hard" : "easy";
+		cat = "Updated " + m + " high scores.";
 		
 		TextView tv = (TextView) v.getChildAt(4); //get the data textview -- THIS NUMBER IS HARDCODED; EDIT IF ACTIVITY_HIGH_SCORES.XML IS EDITED
 		tv.setText(cat);
 	}
 	
+	
+	/* Resets both easy and hard high scores.
+	 */
+	public void resetScores(View view) {
+		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
+		SharedPreferences.Editor prefsEditor = scores.edit();
+		prefsEditor.putInt("e0", 999);
+		prefsEditor.putInt("e1", 999);
+		prefsEditor.putInt("e2", 999);
+		prefsEditor.putInt("e3", 999);
+		prefsEditor.putInt("e4", 999);
+		prefsEditor.putInt("h0", 999);
+		prefsEditor.putInt("h1", 999);
+		prefsEditor.putInt("h2", 999);
+		prefsEditor.putInt("h3", 999);
+		prefsEditor.putInt("h4", 999);
+		prefsEditor.commit();
+		
+		updateEasy();
+		updateHard();
+	}
+	
+	/* Initializes scores if this is the first time they're opening the application.
+	 */
+	public void initScores(){
+		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
+		
+		if( !scores.contains("e0") ){
+			TextView x = new TextView(this); //this might be unnecessary in the future, i just didn't know how to overcome the problem
+	        resetScores(x);
+		}
+	}
+	
+	/* Sorts and inserts a new score into a corresponding HARD/EASY high score saved data.
+	 * INPUT: array of integers representing the top 4 scores, the new score to be added
+	 */
 	public void reSort(int [] arr, int newscore){
 		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
 		SharedPreferences.Editor adder = scores.edit();
@@ -127,29 +174,37 @@ public class HighScoresActivity extends Activity {
 		adder.commit();
 	}
 	
-	public void resetScores(View view) {
+	/* Updates the display contents of the easy high scores into the easy tab.
+	 */
+	public void updateEasy(){
 		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
-		SharedPreferences.Editor prefsEditor = scores.edit();
-		prefsEditor.putInt("e0", 999);
-		prefsEditor.putInt("e1", 999);
-		prefsEditor.putInt("e2", 999);
-		prefsEditor.putInt("e3", 999);
-		prefsEditor.putInt("e4", 999);
-		prefsEditor.putInt("h0", 999);
-		prefsEditor.putInt("h1", 999);
-		prefsEditor.putInt("h2", 999);
-		prefsEditor.putInt("h3", 999);
-		prefsEditor.putInt("h4", 999);
-		prefsEditor.commit();
+		LinearLayout easytab = (LinearLayout) findViewById(R.id.easytab);
+		final ListView easyscores = (ListView) easytab.getChildAt(0); // THIS NUMBER IS HARDCODED, EDIT IF ACTIVITY_HIGH_SCORES.XML IS EDITED
+	    ArrayList<String> list = new ArrayList<String>();
+	    String m = "e";
+	    for (int i = 0; i < 5; i++){
+	    	list.add((Integer.toString(scores.getInt( m.concat(Integer.toString(i)), 999))).concat(" s"));
+	    }
+	
+	    ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+	    easyscores.setAdapter(adapter);
 	}
 	
-	public void initScores(){
+	/* Updates the display contents of the hard high scores into the hard tab.
+	 */
+	public void updateHard(){
 		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
-		
-		if( !scores.contains("e0") ){
-			TextView x = new TextView(this); //this might be unnecessary in the future, i just didn't know how to overcome the problem
-	        resetScores(x);
-		}
+		LinearLayout hardtab = (LinearLayout) findViewById(R.id.hardtab);
+		final ListView hardscores = (ListView) hardtab.getChildAt(0); // THIS NUMBER IS HARDCODED, EDIT IF ACTIVITY_HIGH_SCORES.XML IS EDITED
+	    ArrayList<String> list = new ArrayList<String>();
+	    String m = "h";
+	    for (int i = 0; i < 5; i++){
+	    	list.add((Integer.toString(scores.getInt( m.concat(Integer.toString(i)), 999))).concat(" s"));
+	    }
+	
+	    ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
+	    hardscores.setAdapter(adapter);	
 	}
+	
 
 }

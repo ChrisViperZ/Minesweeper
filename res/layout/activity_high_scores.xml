@@ -20,11 +20,11 @@
             android:orientation="vertical"
             android:paddingTop="60dp" >
 
-            <TextView
-                android:id="@+id/easy_highscores"
-                android:layout_width="fill_parent"
-                android:layout_height="100dp"
-                android:text="This1" />
+            <ListView
+                android:id="@+id/easyscores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -34,11 +34,11 @@
             android:orientation="vertical"
             android:paddingTop="60dp" >
 
-            <TextView
-                android:id="@+id/hard_highscores"
-                android:layout_width="fill_parent"
-                android:layout_height="100dp"
-                android:text="This2" />
+            <ListView
+                android:id="@+id/hardscores"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
         </LinearLayout>
 
         <RelativeLayout
