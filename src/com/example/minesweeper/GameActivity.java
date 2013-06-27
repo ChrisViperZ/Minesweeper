@@ -9,8 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.TableLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class GameActivity extends Activity {
@@ -44,18 +43,32 @@ public class GameActivity extends Activity {
 		PrintBoard();
 
 		timer.schedule(new GameTimerTask(), 0, 1000);
-		
-		GridLayout gv = (GridLayout) findViewById(R.id.grid);
-		
-		Button b = new Button(GameActivity.this);
-		
-		b.setText("Test");
-		
-		gv.addView(b);
-		
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+
+		int xmargin = 0;
+		int ymargin = 0;
+
+		Button b = new Button(this);
+
+		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
+		RelativeLayout.LayoutParams rel_b;
+
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				b = new Button(this);
+				rel_b = new RelativeLayout.LayoutParams(35, 35);
+				rel_b.leftMargin = xmargin;
+				rel_b.topMargin = ymargin;
+				b.setLayoutParams(rel_b);
+				gv.addView(b);
+				xmargin += 35;
+			}
+			ymargin += 35;
+			xmargin = 0;
+		}
+
 	}
 
 	class GameTimerTask extends TimerTask {
@@ -82,7 +95,6 @@ public class GameActivity extends Activity {
 		Button b;
 		TextView tv;
 		String id;
-		GridLayout gv = (GridLayout) findViewById(R.id.grid);
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
@@ -112,7 +124,7 @@ public class GameActivity extends Activity {
 						int cCOL, cROW;
 						if (!isFlag) {
 							// Flag icon not selected
-							
+
 							v.setVisibility(0);
 							if (gameOver)
 								return;
@@ -137,11 +149,10 @@ public class GameActivity extends Activity {
 
 							}
 
-							if (surrounding[cCOL][cROW] != 0) { 
-								//TextView tv = (TextView) findViewbyId();
-								
+							if (surrounding[cCOL][cROW] != 0) {
+								// TextView tv = (TextView) findViewbyId();
 
-							} else { 
+							} else {
 
 							}
 
@@ -152,7 +163,6 @@ public class GameActivity extends Activity {
 					}
 				});
 
-				gv.addView(b);
 			}
 		}
 
