@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class GameActivity extends Activity {
 	int total;
 
 	int time = 0;
+
+	Block block[][] = new Block[COL][ROW];
 
 	boolean inUse[][] = new boolean[COL][ROW];
 	boolean isFlagged[][] = new boolean[COL][ROW];
@@ -46,28 +49,8 @@ public class GameActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-
-		int xmargin = 0;
-		int ymargin = 0;
-
-		Button b = new Button(this);
-
-		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
-		RelativeLayout.LayoutParams rel_b;
-
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				b = new Button(this);
-				rel_b = new RelativeLayout.LayoutParams(35, 35);
-				rel_b.leftMargin = xmargin;
-				rel_b.topMargin = ymargin;
-				b.setLayoutParams(rel_b);
-				gv.addView(b);
-				xmargin += 35;
-			}
-			ymargin += 35;
-			xmargin = 0;
-		}
+		
+		clearBoard();
 
 	}
 
@@ -94,78 +77,42 @@ public class GameActivity extends Activity {
 	public void clearBoard() {
 		Button b;
 		TextView tv;
-		String id;
+
+		int count = 0;
+		int xmargin = 0, ymargin = 0;
+		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
+		RelativeLayout.LayoutParams rel_b;
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				b = new Button(GameActivity.this);
-				tv = new TextView(GameActivity.this);
+				
+				rel_b = new RelativeLayout.LayoutParams(35, 35);
+				rel_b.leftMargin = xmargin;
+				rel_b.topMargin = ymargin;
 
-				id = new String();
-
-				if (i > 9)
-					id += Integer.toString(i);
-				else
-					id += "0" + Integer.toString(i);
-
-				if (j > 9)
-					id += Integer.toString(j);
-				else
-					id += "0" + Integer.toString(j);
-
-				tv.setId(Integer.parseInt(id));
-				tv.setVisibility(0);
-
-				b.setId(Integer.parseInt(id));
-				b.setOnClickListener(new View.OnClickListener() {
-
+				b = new Button(this);
+				b.setId(count);
+				b.setLayoutParams(rel_b);
+				b.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						int cCOL, cROW;
-						if (!isFlag) {
-							// Flag icon not selected
-
-							v.setVisibility(0);
-							if (gameOver)
-								return;
-
-							if (Integer.parseInt(Integer.toString(v.getId())) < 1000) {
-								cCOL = Integer.parseInt(Integer.toString(
-										v.getId()).substring(0, 1));
-								cROW = Integer.parseInt(Integer.toString(
-										v.getId()).substring(1, 3));
-							} else {
-								cCOL = Integer.parseInt(Integer.toString(
-										v.getId()).substring(0, 2));
-								cROW = Integer.parseInt(Integer.toString(
-										v.getId()).substring(2, 4));
-							}
-							if (isFlagged[cCOL][cROW])
-								return;
-
-							if (inUse[cCOL][cROW]) {
-								// Game Over
-								gameOver = true;
-
-							}
-
-							if (surrounding[cCOL][cROW] != 0) {
-								// TextView tv = (TextView) findViewbyId();
-
-							} else {
-
-							}
-
-						} else {
-							// Flag icon is selected
-						}
-
+						System.out.println("Test" + v.getId());
 					}
 				});
 
-			}
-		}
+				gv.addView(b);
 
+				tv = new TextView(this);
+				tv.setLayoutParams(rel_b);
+				tv.setVisibility(0);
+				gv.addView(tv);
+				
+				count++;
+				xmargin += 35;
+			}
+			ymargin += 35;
+			xmargin = 0;
+		}
 	}
 
 	public void FillBoard() {
