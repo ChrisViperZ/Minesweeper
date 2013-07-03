@@ -6,10 +6,10 @@ import java.util.TimerTask;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,6 +17,8 @@ public class GameActivity extends Activity {
 
 	private static int ROW = 9;
 	private static int COL = 9;
+	
+	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
 
@@ -25,6 +27,7 @@ public class GameActivity extends Activity {
 	int time = 0;
 
 	Block block[][] = new Block[COL][ROW];
+	TextView tgrid[][] = new TextView[COL][ROW];
 
 	boolean inUse[][] = new boolean[COL][ROW];
 	boolean isFlagged[][] = new boolean[COL][ROW];
@@ -51,7 +54,7 @@ public class GameActivity extends Activity {
 		setContentView(R.layout.activity_game);
 		
 		clearBoard();
-
+		
 	}
 
 	class GameTimerTask extends TimerTask {
@@ -75,44 +78,68 @@ public class GameActivity extends Activity {
 	}
 
 	public void clearBoard() {
-		Button b;
+		Block b;
 		TextView tv;
 
 		int count = 0;
 		int xmargin = 0, ymargin = 0;
+		
 		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
 		RelativeLayout.LayoutParams rel_b;
+		
+
+		
+
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				
-				rel_b = new RelativeLayout.LayoutParams(35, 35);
+								
+				rel_b = new RelativeLayout.LayoutParams(BLOCKSIZE, BLOCKSIZE);
 				rel_b.leftMargin = xmargin;
 				rel_b.topMargin = ymargin;
 
-				b = new Button(this);
+				b = new Block(this);
 				b.setId(count);
 				b.setLayoutParams(rel_b);
 				b.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						System.out.println("Test" + v.getId());
+						Block b = (Block) v;
+						block[b.getyPos()][b.getxPos()].setVisibility(4);
+						tgrid[b.getyPos()][b.getxPos()].setVisibility(0);
 					}
 				});
 
 				gv.addView(b);
+				
+				
 
 				tv = new TextView(this);
 				tv.setLayoutParams(rel_b);
-				tv.setVisibility(0);
+				tv.setVisibility(4);
+				
+				tv.setText(Integer.toString(surrounding[i][j]));
+				tv.setGravity(Gravity.CENTER);
 				gv.addView(tv);
 				
+				b.setxPos(j);
+				b.setyPos(i);
+				
+				block[i][j] = b;
+				tgrid[i][j] = tv;
+				
 				count++;
-				xmargin += 35;
+				xmargin += BLOCKSIZE;
 			}
-			ymargin += 35;
+			ymargin += BLOCKSIZE;
 			xmargin = 0;
 		}
+		
+		int bSize = gv.getMeasuredWidth() / COL;
+		
+		System.out.println(bSize);
+		
+		
 	}
 
 	public void FillBoard() {

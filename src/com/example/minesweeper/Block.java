@@ -1,20 +1,28 @@
 package com.example.minesweeper;
 
-public class Block {
+import android.content.Context;
+import android.widget.Button;
 
-	private int x = 0;
-	private int y = 0;
+public class Block extends Button{
+
+	public Block(Context context) {
+		super(context);
+		// TODO Auto-generated constructor stub
+	}
+
+	private int xPos = 0;
+	private int yPos = 0;
 
 	private boolean inUse = false;;
 	private boolean isFlagged = false;
 	private int surrounding = 0;
 
-	public int getX() {
-		return x;
+	public int getxPos() {
+		return xPos;
 	}
 
-	public int getY() {
-		return y;
+	public int getyPos() {
+		return yPos;
 	}
 
 	public boolean getUse() {
@@ -29,12 +37,12 @@ public class Block {
 		return surrounding;
 	}
 
-	public void setX(int nx) {
-		x = nx;
+	public void setxPos(int nx) {
+		xPos = nx;
 	}
 
-	public void setY(int ny) {
-		y = ny;
+	public void setyPos(int ny) {
+		yPos = ny;
 	}
 
 	public void setUse(boolean nUse) {
