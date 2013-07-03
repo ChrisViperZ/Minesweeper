@@ -27,11 +27,11 @@ public class GameActivity extends Activity {
 
 	int time = 0;
 
-	Block block[][] = new Block[COL][ROW];
-	TextView tgrid[][] = new TextView[COL][ROW];
+	Block block[][];
+	TextView tgrid[][];
 
-	boolean inUse[][] = new boolean[COL][ROW];
-	boolean isFlagged[][] = new boolean[COL][ROW];
+	boolean inUse[][];
+	boolean isFlagged[][];
 	int surrounding[][] = new int[COL][ROW];
 
 	boolean isHappy = true;
@@ -54,7 +54,7 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 		
-		clearBoard();
+		newBoard();
 		
 	}
 
@@ -63,6 +63,26 @@ public class GameActivity extends Activity {
 		public void run() {
 			if (!gameOver)
 				time++;
+		}
+	}
+	
+	public void faceClick(View view)
+	{
+		clearBoard();
+		gameOver = false;
+		((Button)findViewById(R.id.Face)).setText("H");
+	}
+	
+	public void clearBoard()
+	{
+		FillGame();
+		
+		for (int i = 0; i < COL; i++) {
+			for (int j = 0; j < ROW; j++){
+				block[i][j].setVisibility(View.VISIBLE);
+				tgrid[i][j].setVisibility(View.INVISIBLE);
+				tgrid[i][j].setText(Integer.toString(surrounding[i][j]));				
+			}
 		}
 	}
 
@@ -78,7 +98,7 @@ public class GameActivity extends Activity {
 		FillSurround();
 	}
 
-	public void clearBoard() {
+	public void newBoard() {
 		Block b;
 		TextView tv;
 
@@ -87,8 +107,9 @@ public class GameActivity extends Activity {
 		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
 		RelativeLayout.LayoutParams rel_b;
 		
-		gv.removeAllViews();
-
+		block = new Block[COL][ROW];
+		tgrid = new TextView[COL][ROW];
+		
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
 								
@@ -162,6 +183,11 @@ public class GameActivity extends Activity {
 		int i = 0;
 		int colRand, rowRand;
 		Random rand = new Random();
+		
+		inUse = new boolean[COL][ROW];
+		isFlagged = new boolean[COL][ROW];
+		
+		count = 0;
 
 		while (i < mines) {
 			colRand = rand.nextInt(COL);
