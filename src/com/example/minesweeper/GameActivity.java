@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -81,15 +82,12 @@ public class GameActivity extends Activity {
 		Block b;
 		TextView tv;
 
-		int count = 0;
 		int xmargin = 0, ymargin = 0;
 		
 		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
 		RelativeLayout.LayoutParams rel_b;
 		
-
-		
-
+		gv.removeAllViews();
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
@@ -105,14 +103,33 @@ public class GameActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						Block b = (Block) v;
-						block[b.getyPos()][b.getxPos()].setVisibility(4);
-						tgrid[b.getyPos()][b.getxPos()].setVisibility(0);
+						
+						if(gameOver || isFlagged[b.getyPos()][b.getxPos()])
+							return;
+						
+						if(inUse[b.getyPos()][b.getxPos()])
+						{
+							System.out.println("Boom");
+							gameOver = true;
+							Button b1 = (Button) (findViewById(R.id.Face));
+							b1.setText("S");
+							return;							
+						}
+						block[b.getyPos()][b.getxPos()].setVisibility(View.INVISIBLE);
+						tgrid[b.getyPos()][b.getxPos()].setVisibility(View.VISIBLE);
+						
+						count++;
+						
+						if(count == total)
+						{
+							//Win
+							gameOver=true;
+						}
+						
 					}
 				});
 
-				gv.addView(b);
-				
-				
+				gv.addView(b);				
 
 				tv = new TextView(this);
 				tv.setLayoutParams(rel_b);
@@ -128,7 +145,6 @@ public class GameActivity extends Activity {
 				block[i][j] = b;
 				tgrid[i][j] = tv;
 				
-				count++;
 				xmargin += BLOCKSIZE;
 			}
 			ymargin += BLOCKSIZE;
