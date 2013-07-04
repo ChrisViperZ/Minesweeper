@@ -30,9 +30,9 @@ public class GameActivity extends Activity {
 	Block block[][] = new Block[COL][ROW];
 	TextView tgrid[][] = new TextView[COL][ROW];
 
-	boolean inUse[][] = new boolean[COL][ROW];
-	boolean isFlagged[][] = new boolean[COL][ROW];
-	int surrounding[][] = new int[COL][ROW];
+	boolean inUse[][] = new boolean[COL][ROW];			// Game's mine locations
+	boolean isFlagged[][] = new boolean[COL][ROW];		// User's flagged mine locations
+	int surrounding[][] = new int[COL][ROW];			// Game's number info array 
 
 	boolean isHappy = true;
 	boolean gameOver = false;
@@ -77,6 +77,81 @@ public class GameActivity extends Activity {
 		FillBoard();
 		FillSurround();
 	}
+	
+	public void zeroFlood(int r, int c) { // NOTE: R AND C ARE SWITCHED
+		if (r == 0){ //top row
+			if (c == 0){ //left top side
+				clickIfUnclicked(r,c+1);
+				clickIfUnclicked(r+1,c);
+				clickIfUnclicked(r+1,c+1);
+			}
+			else if (c == COL - 1){ //right top side
+				clickIfUnclicked(r,c-1);
+				clickIfUnclicked(r+1,c-1);
+				clickIfUnclicked(r+1,c);
+			}
+			else{ //middle top
+				clickIfUnclicked(r,c-1);
+				clickIfUnclicked(r,c+1);
+				clickIfUnclicked(r+1,c-1);
+				clickIfUnclicked(r+1,c);
+				clickIfUnclicked(r+1,c+1);
+			}
+		}
+		
+		else if (r == ROW - 1){ //bottom row
+			if (c == 0){ //left bottom side
+				clickIfUnclicked(r-1,c);
+				clickIfUnclicked(r-1,c+1);
+				clickIfUnclicked(r,c+1);
+			}
+			else if (c == COL - 1){ //right bottom side
+				clickIfUnclicked(r-1,c-1);
+				clickIfUnclicked(r-1,c);
+				clickIfUnclicked(r,c-1);
+			}
+			else{ //middle bottom
+				System.out.print("yy");
+				clickIfUnclicked(r-1,c-1);
+				clickIfUnclicked(r-1,c);
+				clickIfUnclicked(r-1,c+1);
+				clickIfUnclicked(r,c-1);
+				clickIfUnclicked(r,c+1);
+
+			}
+		}
+		
+		else if (c == 0){ //left middle side
+			clickIfUnclicked(r-1,c);
+			clickIfUnclicked(r-1,c+1);
+			clickIfUnclicked(r,c+1);
+			clickIfUnclicked(r+1,c);
+			clickIfUnclicked(r+1,c+1);
+		}
+		else if (c == COL - 1){ //right middle side
+			clickIfUnclicked(r-1,c-1);
+			clickIfUnclicked(r-1,c);
+			clickIfUnclicked(r,c-1);
+			clickIfUnclicked(r+1,c-1);
+			clickIfUnclicked(r+1,c);
+		}
+		
+		else{ //all other cases
+			clickIfUnclicked(r-1,c-1);
+			clickIfUnclicked(r-1,c);		
+			clickIfUnclicked(r-1,c+1);
+			clickIfUnclicked(r,c-1);
+			clickIfUnclicked(r,c+1);
+			clickIfUnclicked(r+1,c-1);
+			clickIfUnclicked(r+1,c);
+			clickIfUnclicked(r+1,c+1);
+		}
+	}
+	
+	public void clickIfUnclicked(int r, int c){
+		if(!block[r][c].getClicked())
+			block[r][c].performClick();
+	}
 
 	public void clearBoard() {
 		Block b;
@@ -103,6 +178,7 @@ public class GameActivity extends Activity {
 					@Override
 					public void onClick(View v) {
 						Block b = (Block) v;
+						b.setClicked(true);
 						
 						if(gameOver || isFlagged[b.getyPos()][b.getxPos()])
 							return;
@@ -115,6 +191,11 @@ public class GameActivity extends Activity {
 							b1.setText("S");
 							return;							
 						}
+						//test for zeroflooding-------
+						if(surrounding[b.getyPos()][b.getxPos()] == 0){
+							zeroFlood(b.getyPos(), b.getxPos());
+						}
+						//end test for zeroflooding------
 						block[b.getyPos()][b.getxPos()].setVisibility(View.INVISIBLE);
 						tgrid[b.getyPos()][b.getxPos()].setVisibility(View.VISIBLE);
 						
@@ -157,7 +238,9 @@ public class GameActivity extends Activity {
 		
 		
 	}
-
+	
+	/* Creates and adds mines to the board.
+	 */
 	public void FillBoard() {
 		int i = 0;
 		int colRand, rowRand;
@@ -177,6 +260,10 @@ public class GameActivity extends Activity {
 
 	}
 
+	/* Check the immediate surroundings (8 or less grids) at a position [c,r] and return the number of mines surrounding it.
+	 * INPUT:  Row position, Column position
+	 * OUTPUT: Number of mines surrounding the position
+	 */
 	public int CheckSurround(int r, int c) {
 		int count = 0;
 
@@ -215,6 +302,8 @@ public class GameActivity extends Activity {
 		return count;
 	}
 
+	/* Populate the number board based on mine position. Uses CheckSurround().
+	 */
 	public void FillSurround() {
 
 		for (int i = 0; i < COL; i++) {
@@ -227,17 +316,18 @@ public class GameActivity extends Activity {
 	public void PrintBoard() {
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				System.out.print(surrounding[j][i] + " ");
+				System.out.print(surrounding[i][j] + " ");
 			}
 			System.out.println();
 		}
 
 		int test;
 		System.out.println();
+		System.out.print("------");
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				if (inUse[j][i])
+				if (inUse[i][j])
 					test = 1;
 				else
 					test = 0;

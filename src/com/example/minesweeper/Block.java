@@ -14,6 +14,7 @@ public class Block extends Button{
 	private int yPos = 0;
 
 	private boolean inUse = false;;
+	private boolean isClicked = false;
 	private boolean isFlagged = false;
 	private int surrounding = 0;
 
@@ -25,6 +26,10 @@ public class Block extends Button{
 		return yPos;
 	}
 
+	public boolean getClicked() {
+		return isClicked;
+	}
+	
 	public boolean getUse() {
 		return inUse;
 	}
@@ -45,6 +50,9 @@ public class Block extends Button{
 		yPos = ny;
 	}
 
+	public void setClicked(boolean nClick){
+		isClicked = nClick;
+	}
 	public void setUse(boolean nUse) {
 		inUse = nUse;
 	}
