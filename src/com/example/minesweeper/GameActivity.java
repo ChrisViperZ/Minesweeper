@@ -81,7 +81,11 @@ public class GameActivity extends Activity {
 				block[i][j].setClicked(false);
 				block[i][j].setVisibility(View.VISIBLE);
 				tgrid[i][j].setVisibility(View.INVISIBLE);
-				tgrid[i][j].setText(Integer.toString(surrounding[i][j]));				
+				if(surrounding[i][j] == 0)
+					tgrid[i][j].setText("");
+				else
+					tgrid[i][j].setText(Integer.toString(surrounding[i][j]));
+								
 			}
 		}
 	}
