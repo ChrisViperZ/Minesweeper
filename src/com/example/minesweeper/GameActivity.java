@@ -210,6 +210,7 @@ public class GameActivity extends Activity {
 						
 						if(inUse[b.getyPos()][b.getxPos()])
 						{
+							gameOver = true;
 							System.out.println("Boom");
 							((Button)findViewById(R.id.Face)).setText("S");
 							return;							
