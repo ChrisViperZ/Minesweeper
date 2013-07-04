@@ -45,7 +45,6 @@ public class GameActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
-		System.out.print(total);
 		FillGame();
 		PrintBoard();
 
@@ -171,12 +170,6 @@ public class GameActivity extends Activity {
 			ymargin += BLOCKSIZE;
 			xmargin = 0;
 		}
-		
-		int bSize = gv.getMeasuredWidth() / COL;
-		
-		System.out.println(bSize);
-		
-		
 	}
 
 	public void FillBoard() {
@@ -245,25 +238,35 @@ public class GameActivity extends Activity {
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				surrounding[i][j] = CheckSurround(j, i);
+				
+				if(inUse[i][j])
+					surrounding[i][j] = 9;
+				else
+					surrounding[i][j] = CheckSurround(j, i);
 			}
 		}
 	}
 
 	public void PrintBoard() {
+		System.out.println("SURROUNDING");
+		
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				System.out.print(surrounding[j][i] + " ");
+				System.out.print(surrounding[i][j] + " ");
 			}
 			System.out.println();
 		}
 
 		int test;
 		System.out.println();
-
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		
+		System.out.println("BOMBS 1 = BOMB");
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				if (inUse[j][i])
+				if (inUse[i][j])
 					test = 1;
 				else
 					test = 0;
