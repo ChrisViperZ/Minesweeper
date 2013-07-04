@@ -236,7 +236,10 @@ public class GameActivity extends Activity {
 				tv.setLayoutParams(rel_b);
 				tv.setVisibility(4);
 				
-				tv.setText(Integer.toString(surrounding[i][j]));
+				if(surrounding[i][j] == 0)
+					tv.setText("");
+				else
+					tv.setText(Integer.toString(surrounding[i][j]));
 				tv.setGravity(Gravity.CENTER);
 				gv.addView(tv);
 				
