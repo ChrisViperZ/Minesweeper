@@ -30,9 +30,9 @@ public class GameActivity extends Activity {
 	Block block[][] = new Block[COL][ROW];
 	TextView tgrid[][] = new TextView[COL][ROW];
 
-	boolean inUse[][] = new boolean[COL][ROW];			// Game's mine locations
-	boolean isFlagged[][] = new boolean[COL][ROW];		// User's flagged mine locations
-	int surrounding[][] = new int[COL][ROW];			// Game's number info array 
+	boolean inUse[][];
+	boolean isFlagged[][];
+	int surrounding[][] = new int[COL][ROW];
 
 	boolean isHappy = true;
 	boolean gameOver = false;
