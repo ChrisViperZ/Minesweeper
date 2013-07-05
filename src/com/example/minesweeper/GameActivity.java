@@ -5,7 +5,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -57,6 +60,9 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 		
+		Intent intent = getIntent();
+		hardMode = intent.getBooleanExtra("hardMode", false);
+
 		newBoard();
 		
 	}
@@ -228,14 +234,15 @@ public class GameActivity extends Activity {
 						
 						if(count == total)
 						{
+							
+							//attempt highscore adding
+							System.out.print("Time was " + time);
+							popUpScreen(addScoreFromGame(time));
+	
 							//Win
 							((Button)findViewById(R.id.Face)).setText("W");
 							gameOver=true;
-							
-							//attempt highscore adding
-							addScoreFromGame(time);
-							System.out.print("Time was " + time);
-							//System.out.print((debug == 0) ? "GJ you made it into the top 5" : "Didn't make the top 5 :(");
+
 						}
 						
 					}
@@ -381,9 +388,9 @@ public class GameActivity extends Activity {
 	
 	/* Adds a score into the EASY or HARD high score list, if it is in the top 5
 	 * INPUT: New score to possibly be added
-	 * OUTPUT: 0 if a score was inserted, 1 if not.
+	 * OUTPUT: TRUE if a score was inserted, FALSE if not.
 	 */
-	public int addScoreFromGame(int newscore) {
+	public boolean addScoreFromGame(int newscore) {
 		SharedPreferences scores = getSharedPreferences("scoreList", 0);
 		int easybound = scores.getInt("e4", 999);
 		int hardbound = scores.getInt("h4", 999);
@@ -398,7 +405,7 @@ public class GameActivity extends Activity {
 				arr[i] = scores.getInt(key, 999);
 			}
 			reSort(arr, newscore);
-			return 0;
+			return true;
 		}
 
 		// criteria for adding a new easy high score
@@ -411,10 +418,10 @@ public class GameActivity extends Activity {
 				arr[i] = scores.getInt(key, 999);
 			}
 			reSort(arr, newscore);
-			return 0;
+			return true;
 		}
 
-		return 1;
+		return false;
 	}
 	
 	/* Sorts and inserts a new score into a corresponding HARD/EASY high score saved data.
@@ -441,5 +448,35 @@ public class GameActivity extends Activity {
 		addkey = mode.concat(Integer.toString(0));
 		adder.putInt(addkey, newscore);
 		adder.commit();
+	}
+	
+	/* Creates a popup dialog
+	 * INPUT: boolean of whether or not they made high score
+	 */
+	public void popUpScreen(boolean madeHS){
+		final Context context = this;
+		AlertDialog.Builder popup = new AlertDialog.Builder(this);
+		popup.setTitle("You won!");
+		
+		popup
+			.setMessage(madeHS ? "Congratulations, you've made the top 5 high scores!" : "Try again to beat the top 5 high scores!")	
+			.setPositiveButton("Play Again", new DialogInterface.OnClickListener() {
+				//resets game
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					((Button)findViewById(R.id.Face)).performClick();					
+				}
+			})
+			.setNegativeButton("View High Scores", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent = new Intent(context, HighScoresActivity.class);
+					startActivity(intent);
+				}
+			});
+		
+		AlertDialog popupScreen = popup.create();
+		popupScreen.show();
 	}
 }
