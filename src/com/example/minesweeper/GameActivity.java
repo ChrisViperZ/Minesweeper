@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -46,9 +47,11 @@ public class GameActivity extends Activity {
 	boolean isStarted = false;
 
 	int count = 0;
+	int width = 0;
 
 	Timer timer = new Timer();
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
@@ -74,6 +77,8 @@ public class GameActivity extends Activity {
 					runOnUiThread(setTime);
 				}
 			}
+			
+
 
 		};
 
@@ -85,7 +90,11 @@ public class GameActivity extends Activity {
 		Intent intent = getIntent();
 		hardMode = intent.getBooleanExtra("hardMode", false);
 
+		Display display = getWindowManager().getDefaultDisplay();
+		width = display.getWidth();
 		newBoard();
+		
+
 
 	}
 
@@ -202,6 +211,7 @@ public class GameActivity extends Activity {
 		TextView tv;
 
 		int xmargin = 0, ymargin = 0;
+		int bSize = width / COL;
 
 		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
 		RelativeLayout.LayoutParams rel_b;
@@ -212,7 +222,7 @@ public class GameActivity extends Activity {
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
 
-				rel_b = new RelativeLayout.LayoutParams(BLOCKSIZE, BLOCKSIZE);
+				rel_b = new RelativeLayout.LayoutParams(bSize, bSize);
 				rel_b.leftMargin = xmargin;
 				rel_b.topMargin = ymargin;
 
@@ -280,9 +290,9 @@ public class GameActivity extends Activity {
 				block[i][j] = b;
 				tgrid[i][j] = tv;
 
-				xmargin += BLOCKSIZE;
+				xmargin += bSize;
 			}
-			ymargin += BLOCKSIZE;
+			ymargin += bSize;
 			xmargin = 0;
 		}
 	}
