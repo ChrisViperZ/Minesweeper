@@ -5,6 +5,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -22,6 +27,7 @@ public class GameActivity extends Activity {
 	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
+	private boolean hardMode = false;
 
 	int total;
 
@@ -43,24 +49,23 @@ public class GameActivity extends Activity {
 
 	Timer timer = new Timer();
 
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
 		FillGame();
 		PrintBoard();
-		
-		final Runnable setTime = new Runnable(){
+
+		final Runnable setTime = new Runnable() {
 
 			@Override
 			public void run() {
-			    ((TextView) findViewById(R.id.timeView)).setText(Integer.toString(time));			
+				((TextView) findViewById(R.id.timeView)).setText(Integer
+						.toString(time));
 			}
-			
+
 		};
-		
-		TimerTask timeTask = new TimerTask(){
+
+		TimerTask timeTask = new TimerTask() {
 
 			@Override
 			public void run() {
@@ -69,7 +74,7 @@ public class GameActivity extends Activity {
 					runOnUiThread(setTime);
 				}
 			}
-			
+
 		};
 
 		timer.schedule(timeTask, 0, 1000);
@@ -77,18 +82,20 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
+		Intent intent = getIntent();
+		hardMode = intent.getBooleanExtra("hardMode", false);
+
 		newBoard();
 
 	}
 
-	
-	
 	public void faceClick(View view) {
 		clearBoard();
 		gameOver = false;
 		isStarted = false;
 		time = 0;
-		((TextView) findViewById(R.id.timeView)).setText(Integer.toString(time));
+		((TextView) findViewById(R.id.timeView))
+				.setText(Integer.toString(time));
 		((Button) findViewById(R.id.face)).setText("H");
 	}
 
@@ -217,7 +224,7 @@ public class GameActivity extends Activity {
 					public void onClick(View v) {
 						Block b = (Block) v;
 						b.setClicked(true);
-						
+
 						isStarted = true;
 
 						if (gameOver || isFlagged[b.getyPos()][b.getxPos()])
@@ -245,6 +252,10 @@ public class GameActivity extends Activity {
 							// Win
 							((Button) findViewById(R.id.face)).setText("W");
 							gameOver = true;
+							// attempt highscore adding
+							System.out.print("Time was " + time);
+							popUpScreen(addScoreFromGame(time));
+
 						}
 
 					}
@@ -389,5 +400,111 @@ public class GameActivity extends Activity {
 			}
 			System.out.println();
 		}
+	}
+
+	/*
+	 * Adds a score into the EASY or HARD high score list, if it is in the top 5
+	 * INPUT: New score to possibly be added OUTPUT: TRUE if a score was
+	 * inserted, FALSE if not.
+	 */
+	public boolean addScoreFromGame(int newscore) {
+		SharedPreferences scores = getSharedPreferences("scoreList", 0);
+		int easybound = scores.getInt("e4", 999);
+		int hardbound = scores.getInt("h4", 999);
+
+		// criteria for adding a new hard high score
+		if (hardMode && newscore < hardbound) {
+			String key = "";
+			// grab the top 4 hard scores
+			int[] arr = new int[4];
+			for (int i = 0; i < 4; i++) {
+				key = "h".concat(Integer.toString(i));
+				arr[i] = scores.getInt(key, 999);
+			}
+			reSort(arr, newscore);
+			return true;
+		}
+
+		// criteria for adding a new easy high score
+		else if (!hardMode && newscore < easybound) {
+			String key = "";
+			// grab the top 4 easy scores
+			int[] arr = new int[4];
+			for (int i = 0; i < 4; i++) {
+				key = "e".concat(Integer.toString(i));
+				arr[i] = scores.getInt(key, 999);
+			}
+			reSort(arr, newscore);
+			return true;
+		}
+
+		return false;
+	}
+
+	/*
+	 * Sorts and inserts a new score into a corresponding HARD/EASY high score
+	 * saved data. INPUT: array of integers representing the top 4 scores, the
+	 * new score to be added
+	 */
+	public void reSort(int[] arr, int newscore) {
+		SharedPreferences scores = this.getSharedPreferences("scoreList",
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor adder = scores.edit();
+		String mode = hardMode ? "h" : "e";
+		String addkey = "";
+		for (int i = 3; i >= 0; i--) {
+			addkey = mode.concat(Integer.toString(i + 1));
+			if (arr[i] > newscore) {
+				adder.putInt(addkey, arr[i]);
+			} else {
+				adder.putInt(addkey, newscore);
+				adder.commit();
+				return; // stop shifting values
+			}
+		}
+
+		// if we've reached here, we need to push the newscore to the first
+		// position
+		addkey = mode.concat(Integer.toString(0));
+		adder.putInt(addkey, newscore);
+		adder.commit();
+	}
+
+	/*
+	 * Creates a popup dialog INPUT: boolean of whether or not they made high
+	 * score
+	 */
+	public void popUpScreen(boolean madeHS) {
+		final Context context = this;
+		AlertDialog.Builder popup = new AlertDialog.Builder(this);
+		popup.setTitle("You won!");
+
+		popup.setMessage(
+				madeHS ? "Congratulations, you've made the top 5 high scores!"
+						: "Try again to beat the top 5 high scores!")
+				.setPositiveButton("Play Again",
+						new DialogInterface.OnClickListener() {
+							// resets game
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								((Button) findViewById(R.id.face))
+										.performClick();
+							}
+						})
+				.setNegativeButton("View High Scores",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent intent = new Intent(context,
+										HighScoresActivity.class);
+								startActivity(intent);
+							}
+						});
+
+		AlertDialog popupScreen = popup.create();
+		popupScreen.show();
 	}
 }
