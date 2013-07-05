@@ -5,6 +5,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.Menu;
@@ -22,6 +24,8 @@ public class GameActivity extends Activity {
 	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
+	private boolean hardMode = false;
+
 
 	int total;
 
@@ -135,7 +139,6 @@ public class GameActivity extends Activity {
 				clickIfUnclicked(r,c-1);
 			}
 			else{ //middle bottom
-				System.out.print("yy");
 				clickIfUnclicked(r-1,c-1);
 				clickIfUnclicked(r-1,c);
 				clickIfUnclicked(r-1,c+1);
@@ -215,11 +218,9 @@ public class GameActivity extends Activity {
 							((Button)findViewById(R.id.Face)).setText("S");
 							return;							
 						}
-						//test for zeroflooding-------
 						if(surrounding[b.getyPos()][b.getxPos()] == 0){
 							zeroFlood(b.getyPos(), b.getxPos());
 						}
-						//end test for zeroflooding------
 						block[b.getyPos()][b.getxPos()].setVisibility(View.INVISIBLE);
 						tgrid[b.getyPos()][b.getxPos()].setVisibility(View.VISIBLE);
 						
@@ -230,6 +231,11 @@ public class GameActivity extends Activity {
 							//Win
 							((Button)findViewById(R.id.Face)).setText("W");
 							gameOver=true;
+							
+							//attempt highscore adding
+							addScoreFromGame(time);
+							System.out.print("Time was " + time);
+							//System.out.print((debug == 0) ? "GJ you made it into the top 5" : "Didn't make the top 5 :(");
 						}
 						
 					}
@@ -371,5 +377,69 @@ public class GameActivity extends Activity {
 			}
 			System.out.println();
 		}
+	}
+	
+	/* Adds a score into the EASY or HARD high score list, if it is in the top 5
+	 * INPUT: New score to possibly be added
+	 * OUTPUT: 0 if a score was inserted, 1 if not.
+	 */
+	public int addScoreFromGame(int newscore) {
+		SharedPreferences scores = getSharedPreferences("scoreList", 0);
+		int easybound = scores.getInt("e4", 999);
+		int hardbound = scores.getInt("h4", 999);
+
+		// criteria for adding a new hard high score
+		if (hardMode && newscore < hardbound) {
+			String key = "";
+			// grab the top 4 hard scores
+			int[] arr = new int[4];
+			for (int i = 0; i < 4; i++) {
+				key = "h".concat(Integer.toString(i));
+				arr[i] = scores.getInt(key, 999);
+			}
+			reSort(arr, newscore);
+			return 0;
+		}
+
+		// criteria for adding a new easy high score
+		else if (!hardMode && newscore < easybound) {
+			String key = "";
+			// grab the top 4 easy scores
+			int[] arr = new int[4];
+			for (int i = 0; i < 4; i++) {
+				key = "e".concat(Integer.toString(i));
+				arr[i] = scores.getInt(key, 999);
+			}
+			reSort(arr, newscore);
+			return 0;
+		}
+
+		return 1;
+	}
+	
+	/* Sorts and inserts a new score into a corresponding HARD/EASY high score saved data.
+	 * INPUT: array of integers representing the top 4 scores, the new score to be added
+	 */
+	public void reSort(int [] arr, int newscore){
+		SharedPreferences scores = this.getSharedPreferences("scoreList", Context.MODE_PRIVATE);
+		SharedPreferences.Editor adder = scores.edit();
+		String mode = hardMode ? "h" : "e";
+		String addkey = "";
+		for (int i = 3; i >= 0; i--){
+			addkey = mode.concat(Integer.toString(i+1));
+			if(arr[i] > newscore){
+				adder.putInt(addkey, arr[i]);
+			}
+			else{
+				adder.putInt(addkey, newscore);
+				adder.commit();
+				return; //stop shifting values
+			}
+		}
+		
+		//if we've reached here, we need to push the newscore to the first position
+		addkey = mode.concat(Integer.toString(0));
+		adder.putInt(addkey, newscore);
+		adder.commit();
 	}
 }
