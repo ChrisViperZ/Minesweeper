@@ -50,14 +50,6 @@ public class HighScoresActivity extends Activity {
 		updateHard();
 	}
 	
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.high_scores, menu);
-		return true;
-	}
-
 	public void onModeClicked(View view) {
 		//"on" represents hard; "off" represents easy
 		hardMode = ((ToggleButton) view).isChecked();		

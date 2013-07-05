@@ -25,13 +25,6 @@ public class OptionsActivity extends Activity {
 		textViewToChange.setText(message);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.options, menu);
-		return true;
-	}
-	
 	public void setEasy(View view){
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra("hardMode", false);
