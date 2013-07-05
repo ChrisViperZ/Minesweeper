@@ -13,9 +13,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,8 +24,6 @@ public class GameActivity extends Activity {
 
 	private static int ROW = 9;
 	private static int COL = 9;
-
-	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
 	private boolean hardMode;
@@ -232,10 +230,10 @@ public class GameActivity extends Activity {
 						Block b = (Block) v;
 						b.setClicked(true);
 
-						isStarted = true;
-
 						if (gameOver || isFlagged[b.getyPos()][b.getxPos()])
 							return;
+						
+						isStarted = true;
 
 						if (inUse[b.getyPos()][b.getxPos()]) {
 							gameOver = true;
@@ -267,7 +265,23 @@ public class GameActivity extends Activity {
 
 					}
 				});
+				
+				b.setOnLongClickListener(new OnLongClickListener() { 
+			        @Override
+			        public boolean onLongClick(View v) {
+			            Block b = (Block) v;
+			            isFlagged[b.getyPos()][b.getxPos()] = !isFlagged[b.getyPos()][b.getxPos()];
+			            if(isFlagged[b.getyPos()][b.getxPos()])
+			            	b.setText("F");
+			            else
+			            	b.setText("");
 
+			            return true;
+			        }
+			    });
+				
+				b.setGravity(Gravity.CENTER);
+				
 				gv.addView(b);
 
 				tv = new TextView(this);
