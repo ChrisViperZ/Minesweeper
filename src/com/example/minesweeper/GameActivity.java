@@ -28,7 +28,7 @@ public class GameActivity extends Activity {
 	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
-	private boolean hardMode = false;
+	private boolean hardMode;
 
 	int total;
 
@@ -54,7 +54,11 @@ public class GameActivity extends Activity {
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Intent intent = getIntent();
+		hardMode = intent.getBooleanExtra("hardMode", false);
+		mines = hardMode ? 20 : 10;
 		total = ROW * COL - mines;
+		
 		FillGame();
 		PrintBoard();
 
@@ -87,8 +91,6 @@ public class GameActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
-		Intent intent = getIntent();
-		hardMode = intent.getBooleanExtra("hardMode", false);
 
 		Display display = getWindowManager().getDefaultDisplay();
 		width = display.getWidth();
@@ -505,6 +507,7 @@ public class GameActivity extends Activity {
 									int which) {
 								Intent intent = new Intent(context,
 										HighScoresActivity.class);
+								intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 								startActivity(intent);
 							}
 						});

@@ -18,8 +18,8 @@ public class OptionsActivity extends Activity {
 		//grab hardmode flag from intent and use data
 		Intent intent = getIntent();
 		hardMode = intent.getBooleanExtra("hardMode", false);
-		String message = "Easy";
-		if(hardMode)  { message = "Hard"; }
+		String message = "Current mode set to: Easy";
+		if(hardMode)  { message = "Current mode set to: Hard"; }
 		
 		TextView textViewToChange = (TextView) findViewById(R.id.options_text);
 		textViewToChange.setText(message);

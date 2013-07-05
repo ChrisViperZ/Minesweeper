@@ -15,13 +15,14 @@ public class MainActivity extends Activity {
 		
 		Intent intent = getIntent();
 		hardMode = intent.getBooleanExtra("hardMode", false);
-		
+		System.out.print(hardMode ? "mode hard" : "mode easy");
 		setContentView(R.layout.activity_main);
 	}
 
 	public void startGame(View view)
 	{
 		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("hardMode", hardMode);
 		startActivity(intent);
 	}
 	
