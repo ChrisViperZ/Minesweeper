@@ -18,7 +18,7 @@ public class GameActivity extends Activity {
 
 	private static int ROW = 9;
 	private static int COL = 9;
-	
+
 	private static int BLOCKSIZE = 40;
 
 	private int mines = 10;
@@ -37,55 +37,74 @@ public class GameActivity extends Activity {
 	boolean isHappy = true;
 	boolean gameOver = false;
 	boolean isFlag = false;
+	boolean isStarted = false;
 
 	int count = 0;
 
 	Timer timer = new Timer();
+
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		total = ROW * COL - mines;
 		FillGame();
 		PrintBoard();
+		
+		final Runnable setTime = new Runnable(){
 
-		timer.schedule(new GameTimerTask(), 0, 1000);
+			@Override
+			public void run() {
+			    ((TextView) findViewById(R.id.timeView)).setText(Integer.toString(time));			
+			}
+			
+		};
+		
+		TimerTask timeTask = new TimerTask(){
+
+			@Override
+			public void run() {
+				if (!gameOver && isStarted) {
+					time++;
+					runOnUiThread(setTime);
+				}
+			}
+			
+		};
+
+		timer.schedule(timeTask, 0, 1000);
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-		
+
 		newBoard();
-		
+
 	}
 
-	class GameTimerTask extends TimerTask {
-		@Override
-		public void run() {
-			if (!gameOver)
-				time++;
-		}
-	}
 	
-	public void faceClick(View view)
-	{
+	
+	public void faceClick(View view) {
 		clearBoard();
 		gameOver = false;
-		((Button)findViewById(R.id.Face)).setText("H");
+		isStarted = false;
+		time = 0;
+		((TextView) findViewById(R.id.timeView)).setText(Integer.toString(time));
+		((Button) findViewById(R.id.face)).setText("H");
 	}
-	
-	public void clearBoard()
-	{
+
+	public void clearBoard() {
 		FillGame();
-		
+
 		for (int i = 0; i < COL; i++) {
-			for (int j = 0; j < ROW; j++){
+			for (int j = 0; j < ROW; j++) {
 				block[i][j].setClicked(false);
 				block[i][j].setVisibility(View.VISIBLE);
 				tgrid[i][j].setVisibility(View.INVISIBLE);
-				if(surrounding[i][j] == 0)
+				if (surrounding[i][j] == 0)
 					tgrid[i][j].setText("");
 				else
 					tgrid[i][j].setText(Integer.toString(surrounding[i][j]));
-								
+
 			}
 		}
 	}
@@ -101,79 +120,73 @@ public class GameActivity extends Activity {
 		FillBoard();
 		FillSurround();
 	}
-	
+
 	public void zeroFlood(int r, int c) { // NOTE: R AND C ARE SWITCHED
-		if (r == 0){ //top row
-			if (c == 0){ //left top side
-				clickIfUnclicked(r,c+1);
-				clickIfUnclicked(r+1,c);
-				clickIfUnclicked(r+1,c+1);
-			}
-			else if (c == COL - 1){ //right top side
-				clickIfUnclicked(r,c-1);
-				clickIfUnclicked(r+1,c-1);
-				clickIfUnclicked(r+1,c);
-			}
-			else{ //middle top
-				clickIfUnclicked(r,c-1);
-				clickIfUnclicked(r,c+1);
-				clickIfUnclicked(r+1,c-1);
-				clickIfUnclicked(r+1,c);
-				clickIfUnclicked(r+1,c+1);
+		if (r == 0) { // top row
+			if (c == 0) { // left top side
+				clickIfUnclicked(r, c + 1);
+				clickIfUnclicked(r + 1, c);
+				clickIfUnclicked(r + 1, c + 1);
+			} else if (c == COL - 1) { // right top side
+				clickIfUnclicked(r, c - 1);
+				clickIfUnclicked(r + 1, c - 1);
+				clickIfUnclicked(r + 1, c);
+			} else { // middle top
+				clickIfUnclicked(r, c - 1);
+				clickIfUnclicked(r, c + 1);
+				clickIfUnclicked(r + 1, c - 1);
+				clickIfUnclicked(r + 1, c);
+				clickIfUnclicked(r + 1, c + 1);
 			}
 		}
-		
-		else if (r == ROW - 1){ //bottom row
-			if (c == 0){ //left bottom side
-				clickIfUnclicked(r-1,c);
-				clickIfUnclicked(r-1,c+1);
-				clickIfUnclicked(r,c+1);
-			}
-			else if (c == COL - 1){ //right bottom side
-				clickIfUnclicked(r-1,c-1);
-				clickIfUnclicked(r-1,c);
-				clickIfUnclicked(r,c-1);
-			}
-			else{ //middle bottom
-				System.out.print("yy");
-				clickIfUnclicked(r-1,c-1);
-				clickIfUnclicked(r-1,c);
-				clickIfUnclicked(r-1,c+1);
-				clickIfUnclicked(r,c-1);
-				clickIfUnclicked(r,c+1);
+
+		else if (r == ROW - 1) { // bottom row
+			if (c == 0) { // left bottom side
+				clickIfUnclicked(r - 1, c);
+				clickIfUnclicked(r - 1, c + 1);
+				clickIfUnclicked(r, c + 1);
+			} else if (c == COL - 1) { // right bottom side
+				clickIfUnclicked(r - 1, c - 1);
+				clickIfUnclicked(r - 1, c);
+				clickIfUnclicked(r, c - 1);
+			} else { // middle bottom
+				clickIfUnclicked(r - 1, c - 1);
+				clickIfUnclicked(r - 1, c);
+				clickIfUnclicked(r - 1, c + 1);
+				clickIfUnclicked(r, c - 1);
+				clickIfUnclicked(r, c + 1);
 
 			}
 		}
-		
-		else if (c == 0){ //left middle side
-			clickIfUnclicked(r-1,c);
-			clickIfUnclicked(r-1,c+1);
-			clickIfUnclicked(r,c+1);
-			clickIfUnclicked(r+1,c);
-			clickIfUnclicked(r+1,c+1);
+
+		else if (c == 0) { // left middle side
+			clickIfUnclicked(r - 1, c);
+			clickIfUnclicked(r - 1, c + 1);
+			clickIfUnclicked(r, c + 1);
+			clickIfUnclicked(r + 1, c);
+			clickIfUnclicked(r + 1, c + 1);
+		} else if (c == COL - 1) { // right middle side
+			clickIfUnclicked(r - 1, c - 1);
+			clickIfUnclicked(r - 1, c);
+			clickIfUnclicked(r, c - 1);
+			clickIfUnclicked(r + 1, c - 1);
+			clickIfUnclicked(r + 1, c);
 		}
-		else if (c == COL - 1){ //right middle side
-			clickIfUnclicked(r-1,c-1);
-			clickIfUnclicked(r-1,c);
-			clickIfUnclicked(r,c-1);
-			clickIfUnclicked(r+1,c-1);
-			clickIfUnclicked(r+1,c);
-		}
-		
-		else{ //all other cases
-			clickIfUnclicked(r-1,c-1);
-			clickIfUnclicked(r-1,c);		
-			clickIfUnclicked(r-1,c+1);
-			clickIfUnclicked(r,c-1);
-			clickIfUnclicked(r,c+1);
-			clickIfUnclicked(r+1,c-1);
-			clickIfUnclicked(r+1,c);
-			clickIfUnclicked(r+1,c+1);
+
+		else { // all other cases
+			clickIfUnclicked(r - 1, c - 1);
+			clickIfUnclicked(r - 1, c);
+			clickIfUnclicked(r - 1, c + 1);
+			clickIfUnclicked(r, c - 1);
+			clickIfUnclicked(r, c + 1);
+			clickIfUnclicked(r + 1, c - 1);
+			clickIfUnclicked(r + 1, c);
+			clickIfUnclicked(r + 1, c + 1);
 		}
 	}
-	
-	public void clickIfUnclicked(int r, int c){
-		if(!block[r][c].getClicked())
+
+	public void clickIfUnclicked(int r, int c) {
+		if (!block[r][c].getClicked())
 			block[r][c].performClick();
 	}
 
@@ -182,16 +195,16 @@ public class GameActivity extends Activity {
 		TextView tv;
 
 		int xmargin = 0, ymargin = 0;
-		
+
 		RelativeLayout gv = (RelativeLayout) findViewById(R.id.grid);
 		RelativeLayout.LayoutParams rel_b;
-		
+
 		block = new Block[COL][ROW];
 		tgrid = new TextView[COL][ROW];
-		
+
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-								
+
 				rel_b = new RelativeLayout.LayoutParams(BLOCKSIZE, BLOCKSIZE);
 				rel_b.leftMargin = xmargin;
 				rel_b.topMargin = ymargin;
@@ -205,72 +218,75 @@ public class GameActivity extends Activity {
 						Block b = (Block) v;
 						b.setClicked(true);
 						
-						if(gameOver || isFlagged[b.getyPos()][b.getxPos()])
+						isStarted = true;
+
+						if (gameOver || isFlagged[b.getyPos()][b.getxPos()])
 							return;
-						
-						if(inUse[b.getyPos()][b.getxPos()])
-						{
+
+						if (inUse[b.getyPos()][b.getxPos()]) {
 							gameOver = true;
 							System.out.println("Boom");
-							((Button)findViewById(R.id.Face)).setText("S");
-							return;							
+							((Button) findViewById(R.id.face)).setText("S");
+							return;
 						}
-						//test for zeroflooding-------
-						if(surrounding[b.getyPos()][b.getxPos()] == 0){
+						// test for zeroflooding-------
+						if (surrounding[b.getyPos()][b.getxPos()] == 0) {
 							zeroFlood(b.getyPos(), b.getxPos());
 						}
-						//end test for zeroflooding------
-						block[b.getyPos()][b.getxPos()].setVisibility(View.INVISIBLE);
-						tgrid[b.getyPos()][b.getxPos()].setVisibility(View.VISIBLE);
-						
+						// end test for zeroflooding------
+						block[b.getyPos()][b.getxPos()]
+								.setVisibility(View.INVISIBLE);
+						tgrid[b.getyPos()][b.getxPos()]
+								.setVisibility(View.VISIBLE);
+
 						count++;
-						
-						if(count == total)
-						{
-							//Win
-							((Button)findViewById(R.id.Face)).setText("W");
-							gameOver=true;
+
+						if (count == total) {
+							// Win
+							((Button) findViewById(R.id.face)).setText("W");
+							gameOver = true;
 						}
-						
+
 					}
 				});
 
-				gv.addView(b);				
+				gv.addView(b);
 
 				tv = new TextView(this);
 				tv.setLayoutParams(rel_b);
 				tv.setVisibility(4);
-				
-				if(surrounding[i][j] == 0)
+
+				if (surrounding[i][j] == 0)
 					tv.setText("");
 				else
 					tv.setText(Integer.toString(surrounding[i][j]));
 				tv.setGravity(Gravity.CENTER);
 				gv.addView(tv);
-				
+
 				b.setxPos(j);
 				b.setyPos(i);
-				
+
 				block[i][j] = b;
 				tgrid[i][j] = tv;
-				
+
 				xmargin += BLOCKSIZE;
 			}
 			ymargin += BLOCKSIZE;
 			xmargin = 0;
 		}
 	}
-	
-	/* Creates and adds mines to the board.
+
+	/*
+	 * Creates and adds mines to the board.
 	 */
 	public void FillBoard() {
 		int i = 0;
 		int colRand, rowRand;
 		Random rand = new Random();
-		
+
 		inUse = new boolean[COL][ROW];
 		isFlagged = new boolean[COL][ROW];
-		
+
 		count = 0;
 
 		while (i < mines) {
@@ -287,9 +303,10 @@ public class GameActivity extends Activity {
 
 	}
 
-	/* Check the immediate surroundings (8 or less grids) at a position [c,r] and return the number of mines surrounding it.
-	 * INPUT:  Row position, Column position
-	 * OUTPUT: Number of mines surrounding the position
+	/*
+	 * Check the immediate surroundings (8 or less grids) at a position [c,r]
+	 * and return the number of mines surrounding it. INPUT: Row position,
+	 * Column position OUTPUT: Number of mines surrounding the position
 	 */
 	public int CheckSurround(int r, int c) {
 		int count = 0;
@@ -329,14 +346,15 @@ public class GameActivity extends Activity {
 		return count;
 	}
 
-	/* Populate the number board based on mine position. Uses CheckSurround().
+	/*
+	 * Populate the number board based on mine position. Uses CheckSurround().
 	 */
 	public void FillSurround() {
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
-				
-				if(inUse[i][j])
+
+				if (inUse[i][j])
 					surrounding[i][j] = 9;
 				else
 					surrounding[i][j] = CheckSurround(j, i);
@@ -346,7 +364,7 @@ public class GameActivity extends Activity {
 
 	public void PrintBoard() {
 		System.out.println("SURROUNDING");
-		
+
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
 				System.out.print(surrounding[i][j] + " ");
@@ -359,7 +377,7 @@ public class GameActivity extends Activity {
 		System.out.println();
 		System.out.println();
 		System.out.println();
-		
+
 		System.out.println("BOMBS 1 = BOMB");
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
