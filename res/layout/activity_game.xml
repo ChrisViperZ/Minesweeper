@@ -6,6 +6,15 @@
         android:layout_width="match_parent"
         android:layout_height="50dp" >
 
+        <TextView
+            android:id="@+id/mineView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:text="10" />
+
         <Button
             android:id="@+id/face"
             android:layout_width="wrap_content"
@@ -13,8 +22,8 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:minHeight="35dp"
-            android:text="H"
-            android:onClick="faceClick" />
+            android:onClick="faceClick"
+            android:text="H" />
 
         <TextView
             android:id="@+id/timeView"
@@ -23,9 +32,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
-            android:text="0"
-             />
-
+            android:text="0" />
     </RelativeLayout>
 
     <RelativeLayout

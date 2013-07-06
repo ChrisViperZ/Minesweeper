@@ -31,6 +31,7 @@ public class GameActivity extends Activity {
 	int total;
 
 	int time = 0;
+	int numflags = 0;
 
 	Block block[][];
 	TextView tgrid[][];
@@ -88,6 +89,7 @@ public class GameActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
+		((TextView) findViewById(R.id.mineView)).setText(Integer.toString(mines));
 
 
 		Display display = getWindowManager().getDefaultDisplay();
@@ -237,7 +239,7 @@ public class GameActivity extends Activity {
 
 						if (inUse[b.getyPos()][b.getxPos()]) {
 							gameOver = true;
-							System.out.println("Boom");
+							System.out.println("Boom - y, x: " + b.getyPos() + b.getxPos());
 							((Button) findViewById(R.id.face)).setText("S");
 							return;
 						}
@@ -271,10 +273,15 @@ public class GameActivity extends Activity {
 			        public boolean onLongClick(View v) {
 			            Block b = (Block) v;
 			            isFlagged[b.getyPos()][b.getxPos()] = !isFlagged[b.getyPos()][b.getxPos()];
-			            if(isFlagged[b.getyPos()][b.getxPos()])
+			            if(isFlagged[b.getyPos()][b.getxPos()]) {
 			            	b.setText("F");
-			            else
+			            	numflags++;
+			            }
+			            else {
 			            	b.setText("");
+			            	numflags--;
+			            }
+		            	((TextView) findViewById(R.id.mineView)).setText(Integer.toString(mines - numflags));
 
 			            return true;
 			        }
