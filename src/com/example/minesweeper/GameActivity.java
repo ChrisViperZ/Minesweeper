@@ -57,7 +57,7 @@ public class GameActivity extends Activity {
 		hardMode = intent.getBooleanExtra("hardMode", false);
 		mines = hardMode ? 20 : 10;
 		total = ROW * COL - mines;
-		
+
 		FillGame();
 		PrintBoard();
 
@@ -80,8 +80,6 @@ public class GameActivity extends Activity {
 					runOnUiThread(setTime);
 				}
 			}
-			
-
 
 		};
 
@@ -89,14 +87,13 @@ public class GameActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
-		((TextView) findViewById(R.id.mineView)).setText(Integer.toString(mines));
-
-
+		((TextView) findViewById(R.id.mineView)).setText(Integer
+				.toString(mines));
+		
+		
 		Display display = getWindowManager().getDefaultDisplay();
 		width = display.getWidth();
 		newBoard();
-		
-
 
 	}
 
@@ -107,7 +104,7 @@ public class GameActivity extends Activity {
 		time = 0;
 		((TextView) findViewById(R.id.timeView))
 				.setText(Integer.toString(time));
-		((Button) findViewById(R.id.face)).setText("H");
+		((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.happy);
 	}
 
 	public void clearBoard() {
@@ -128,8 +125,6 @@ public class GameActivity extends Activity {
 			}
 		}
 	}
-
-
 
 	public void FillGame() {
 		FillBoard();
@@ -236,13 +231,14 @@ public class GameActivity extends Activity {
 
 						if (gameOver || isFlagged[b.getyPos()][b.getxPos()])
 							return;
-						
+
 						isStarted = true;
 
 						if (inUse[b.getyPos()][b.getxPos()]) {
 							gameOver = true;
-							System.out.println("Boom - y, x: " + b.getyPos() + b.getxPos());
-							((Button) findViewById(R.id.face)).setText("S");
+							System.out.println("Boom - y, x: " + b.getyPos()
+									+ b.getxPos());
+							((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.sad);
 							return;
 						}
 						// test for zeroflooding-------
@@ -259,7 +255,7 @@ public class GameActivity extends Activity {
 
 						if (count == total) {
 							// Win
-							((Button) findViewById(R.id.face)).setText("W");
+							((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.win);
 							gameOver = true;
 							// attempt highscore adding
 							System.out.print("Time was " + time);
@@ -269,28 +265,29 @@ public class GameActivity extends Activity {
 
 					}
 				});
-				
-				b.setOnLongClickListener(new OnLongClickListener() { 
-			        @Override
-			        public boolean onLongClick(View v) {
-			            Block b = (Block) v;
-			            isFlagged[b.getyPos()][b.getxPos()] = !isFlagged[b.getyPos()][b.getxPos()];
-			            if(isFlagged[b.getyPos()][b.getxPos()]) {
-			            	b.setText("F");
-			            	numflags++;
-			            }
-			            else {
-			            	b.setText("");
-			            	numflags--;
-			            }
-		            	((TextView) findViewById(R.id.mineView)).setText(Integer.toString(mines - numflags));
 
-			            return true;
-			        }
-			    });
-				
+				b.setOnLongClickListener(new OnLongClickListener() {
+					@Override
+					public boolean onLongClick(View v) {
+						Block b = (Block) v;
+						isFlagged[b.getyPos()][b.getxPos()] = !isFlagged[b
+								.getyPos()][b.getxPos()];
+						if (isFlagged[b.getyPos()][b.getxPos()]) {
+							b.setText("F");
+							numflags++;
+						} else {
+							b.setText("");
+							numflags--;
+						}
+						((TextView) findViewById(R.id.mineView))
+								.setText(Integer.toString(mines - numflags));
+
+						return true;
+					}
+				});
+
 				b.setGravity(Gravity.CENTER);
-				
+
 				gv.addView(b);
 
 				tv = new TextView(this);

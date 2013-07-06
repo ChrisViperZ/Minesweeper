@@ -22,8 +22,11 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:minHeight="35dp"
+            android:maxHeight="35dp"
+            android:minWidth="35dp"
+            android:maxWidth="35dp"
             android:onClick="faceClick"
-            android:text="H" />
+            android:background="@drawable/happy"/>
 
         <TextView
             android:id="@+id/timeView"
