@@ -89,8 +89,7 @@ public class GameActivity extends Activity {
 		setContentView(R.layout.activity_game);
 		((TextView) findViewById(R.id.mineView)).setText(Integer
 				.toString(mines));
-		
-		
+
 		Display display = getWindowManager().getDefaultDisplay();
 		width = display.getWidth();
 		newBoard();
@@ -104,11 +103,16 @@ public class GameActivity extends Activity {
 		time = 0;
 		((TextView) findViewById(R.id.timeView))
 				.setText(Integer.toString(time));
-		((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.happy);
+		((Button) findViewById(R.id.face))
+				.setBackgroundResource(R.drawable.happy);
 	}
 
 	public void clearBoard() {
 		FillGame();
+		numflags = 0;
+
+		((TextView) findViewById(R.id.mineView)).setText(Integer.toString(mines
+				- numflags));
 
 		for (int i = 0; i < COL; i++) {
 			for (int j = 0; j < ROW; j++) {
@@ -238,7 +242,8 @@ public class GameActivity extends Activity {
 							gameOver = true;
 							System.out.println("Boom - y, x: " + b.getyPos()
 									+ b.getxPos());
-							((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.sad);
+							((Button) findViewById(R.id.face))
+									.setBackgroundResource(R.drawable.sad);
 							return;
 						}
 						// test for zeroflooding-------
@@ -255,7 +260,8 @@ public class GameActivity extends Activity {
 
 						if (count == total) {
 							// Win
-							((Button) findViewById(R.id.face)).setBackgroundResource(R.drawable.win);
+							((Button) findViewById(R.id.face))
+									.setBackgroundResource(R.drawable.win);
 							gameOver = true;
 							// attempt highscore adding
 							System.out.print("Time was " + time);

@@ -12,8 +12,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:text="10" />
+            android:layout_marginLeft="15dp" />
 
         <Button
             android:id="@+id/face"
