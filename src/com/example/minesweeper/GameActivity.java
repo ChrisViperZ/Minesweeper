@@ -115,6 +115,8 @@ public class GameActivity extends Activity {
 			for (int j = 0; j < ROW; j++) {
 				block[i][j].setClicked(false);
 				block[i][j].setVisibility(View.VISIBLE);
+				block[i][j].setText("");
+				isFlagged[i][j] = false;
 				tgrid[i][j].setVisibility(View.INVISIBLE);
 				if (surrounding[i][j] == 0)
 					tgrid[i][j].setText("");
