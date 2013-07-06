@@ -43,7 +43,7 @@ public class HighScoresActivity extends Activity {
 		
 		tabHost.addTab(spec1);
 		tabHost.addTab(spec2);
-		tabHost.addTab(spec3);
+	//	tabHost.addTab(spec3);     // removed in final version
 		
 		initScores();
 		updateEasy();
