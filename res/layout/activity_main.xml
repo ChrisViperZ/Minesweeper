@@ -54,4 +54,13 @@
         android:onClick="options_click"
         android:text="@string/options_text" />
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:text="By Alice Lin and Chris Zelenka" />
+
 </RelativeLayout>
